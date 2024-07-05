@@ -5,7 +5,7 @@ function App() {
     <>
       <form className="bg-gray-100 p-4 rounded-lg shadow-lg max-w-xs mx-auto">
         <div className="segment">
-          <h1 className="text-xl font-bold">Sign up</h1>
+          <h1 className="text-2xl text-black font-bold">Sign up</h1>
         </div>
 
         <label className="block mb-6">
