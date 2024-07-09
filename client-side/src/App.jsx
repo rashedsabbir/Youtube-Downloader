@@ -4,6 +4,7 @@ function App() {
   return (
     <div className="bg-white flex flex-row justify-center">
       <div className="segment">
+        <img className="w-16 h-16" src="../public/youtube.svg" alt="" />
         <h1 className="text-2xl text-black font-bold">
           YouTube Video Downloader
         </h1>
