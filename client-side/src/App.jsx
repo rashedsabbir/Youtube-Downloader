@@ -1,6 +1,6 @@
 import "./App.css";
 
-import React, { useState } from "react";
+import { useState } from "react";
 
 function App() {
   const [modalOpen, setModalOpen] = useState(false); // State to manage modal visibility
@@ -13,7 +13,7 @@ function App() {
     // Simulate loading delay (you would replace this with your actual video loading logic)
     setTimeout(() => {
       setLoading(false); // Stop loading animation
-    }, 2000); // Simulate loading time of 2 seconds
+    }, 10000); // Simulate loading time of 2 seconds
   };
 
   const closeModal = () => {
@@ -64,33 +64,34 @@ function App() {
       {/* Modal */}
       {modalOpen && (
         <div className="fixed top-0 left-0 right-0 bottom-0 backdrop-blur-md bg-white/30 flex justify-center items-center">
-          <div className="bg-white p-8 rounded-lg shadow-lg max-w-lg">
-            <div className="flex justify-end">
-              <button
-                className="text-gray-500 hover:text-gray-700 focus:outline-none"
-                onClick={closeModal}
+          <div className="flex justify-end">
+            <button
+              className="text-gray-500 hover:text-gray-700 focus:outline-none"
+              onClick={closeModal}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
-            </div>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
+          <div className="bg-gray-300 p-8 rounded-lg shadow-lg max-w-lg">
             {loading ? (
-              <div className="text-center">
-                <p className="text-lg font-bold mb-4">Loading...</p>
-                {/* Replace with your loading animation */}
-                <div className="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
+              <div className="flex space-x-2 justify-center items-center ">
+                <span className="sr-only">Loading...</span>
+                <div className="neomorphic-dot shadow-inner shadow-white bg-red-500 h-8 w-8 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+                <div className="neomorphic-dot h-8 w-8 shadow-lg outline-none ring-gray-50 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+                <div className="neomorphic-dot h-8 w-8 rounded-full animate-bounce"></div>
               </div>
             ) : (
               <>
