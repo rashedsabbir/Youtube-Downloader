@@ -89,9 +89,9 @@ function App() {
             {loading ? (
               <div className="flex space-x-2 justify-center items-center ">
                 <span className="sr-only">Loading...</span>
-                <div className="neomorphic-dot shadow-inner shadow-white bg-red-500 h-8 w-8 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-                <div className="neomorphic-dot h-8 w-8 shadow-lg outline-none ring-gray-50 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-                <div className="neomorphic-dot h-8 w-8 rounded-full animate-bounce"></div>
+                <div className="neomorphic-dot shadow-inner bg-gray-100 h-8 w-8 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+                <div className="neomorphic-dot shadow-inner bg-gray-100 h-8 w-8 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+                <div className="neomorphic-dot shadow-inner bg-gray-100 h-8 w-8 rounded-full animate-bounce"></div>
               </div>
             ) : (
               <>
