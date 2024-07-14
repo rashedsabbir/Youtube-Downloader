@@ -13,7 +13,7 @@ function App() {
     // Simulate loading delay (you would replace this with your actual video loading logic)
     setTimeout(() => {
       setLoading(false); // Stop loading animation
-    }, 10000); // Simulate loading time of 2 seconds
+    }, 2000); // Simulate loading time of 2 seconds
   };
 
   const closeModal = () => {
@@ -64,52 +64,80 @@ function App() {
       {/* Modal */}
       {modalOpen && (
         <div className="fixed top-0 left-0 right-0 bottom-0 backdrop-blur-md bg-white/30 flex justify-center items-center">
-          <div className="flex justify-end">
-            <button
-              className="text-gray-500 hover:text-gray-700 focus:outline-none"
-              onClick={closeModal}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-          </div>
-          <div className="bg-gray-300 p-8 rounded-lg shadow-lg max-w-lg">
+          <div className=" ">
             {loading ? (
               <div className="flex space-x-2 justify-center items-center ">
                 <span className="sr-only">Loading...</span>
-                <div className="neomorphic-dot shadow-inner bg-gray-100 h-8 w-8 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-                <div className="neomorphic-dot shadow-inner bg-gray-100 h-8 w-8 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-                <div className="neomorphic-dot shadow-inner bg-gray-100 h-8 w-8 rounded-full animate-bounce"></div>
+                <div className="neomorphic-dot shadow-inner bg-red-500 h-8 w-8 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+                <div className="neomorphic-dot shadow-inner bg-red-500 h-8 w-8 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+                <div className="neomorphic-dot shadow-inner bg-red-500 h-8 w-8 rounded-full animate-bounce"></div>
               </div>
             ) : (
               <>
-                <div className="relative h-0 pb-9/16">
-                  <iframe
-                    title="Video"
-                    className="absolute inset-0 w-full h-full"
-                    src={`https://www.youtube.com/embed/${videoUrl}`}
-                    frameBorder="0"
-                    allowFullScreen
-                  ></iframe>
+                <div className="relative flex w-80 flex-col rounded-xl bg-gray-300 bg-clip-border text-gray-700 shadow-md">
+                  <div className="relative mx-4 -mt-6 h-40 overflow-hidden rounded-xl bg-blue-gray-500 bg-clip-border text-white shadow-lg shadow-blue-gray-500/40 bg-gradient-to-r from-blue-500 to-blue-600">
+                    <div className="relative h-0 pb-9/16">
+                      <iframe
+                        title="Video"
+                        className="absolute inset-0 w-full h-full"
+                        src={`https://www.youtube.com/embed/${videoUrl}`}
+                        frameBorder="0"
+                        allowFullScreen
+                      ></iframe>
+                    </div>
+                  </div>
+                  <div className="p-6">
+                    <h5 className="mb-2 block font-sans text-xl font-semibold leading-snug tracking-normal text-blue-gray-900 antialiased">
+                      Video Title
+                    </h5>
+                    <p className="block font-sans text-base font-light leading-relaxed text-inherit antialiased">
+                      Video Description
+                    </p>
+                  </div>
+                  <div className="p-6 pt-0 flex justify-evenly">
+                    <button
+                      className="neumorphic-button mt-4 bg-green-600 text-gray-100 px-4 py-2 rounded-lg shadow-lg shadow-green-300 focus:outline-none hover:border-0 focus:ring-gray-300 flex flex-row gap-1 justify-center items-center"
+                      onClick={closeModal}
+                    >
+                      <svg
+                        height="15px"
+                        version="1.1"
+                        viewBox="0 0 14 19"
+                        width="14px"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <title />
+                        <desc />
+                        <defs />
+                        <g fill="none" id="Page-1" stroke="none">
+                          <g
+                            fill="white"
+                            id="Core"
+                            transform="translate(-383.000000, -213.000000)"
+                          >
+                            <g
+                              id="file-download"
+                              transform="translate(383.000000, 213.500000)"
+                            >
+                              <path
+                                d="M14,6 L10,6 L10,0 L4,0 L4,6 L0,6 L7,13 L14,6 L14,6 Z M0,15 L0,17 L14,17 L14,15 L0,15 L0,15 Z"
+                                id="Shape"
+                              />
+                            </g>
+                          </g>
+                        </g>
+                      </svg>
+                      <p>Save to Device</p>
+                    </button>
+                    <button
+                      className="neumorphic-button mt-4 bg-red-500 text-gray-100 px-4 py-2 rounded-lg shadow-lg shadow-red-300 focus:outline-none hover:border-0 focus:ring-gray-300 flex flex-row"
+                      onClick={closeModal}
+                    >
+                      <p className="pr-1">X</p>
+                      <p>Close</p>
+                    </button>
+                  </div>
                 </div>
-                <button
-                  className="neumorphic-button mt-4 bg-blue-500 text-gray-100 px-4 py-2 rounded-lg shadow-lg shadow-blue-300 focus:outline-none hover:border-0 focus:ring-gray-300"
-                  onClick={closeModal}
-                >
-                  Add to Device
-                </button>
               </>
             )}
           </div>
