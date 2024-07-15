@@ -1,6 +1,7 @@
 import "./App.css";
 
 import { useState } from "react";
+import Loading from "./components/loading";
 
 function App() {
   const [modalOpen, setModalOpen] = useState(false); // State to manage modal visibility
@@ -34,7 +35,7 @@ function App() {
   return (
     <div className="box bg-gray-200 p-4 m-16 rounded-lg shadow-lg max-w-3xl mx-auto">
       <div className="grid grid-cols-1 gap-6 place-items-center">
-        <img className="w-16 h-16" src="../public/youtube.svg" alt="" />
+        <img className="w-16 h-16" src="../youtube.svg" alt="" />
         <p className="text-4xl text-black text-center font-bold">
           YouTube Video Downloader
         </p>
@@ -66,12 +67,7 @@ function App() {
         <div className="fixed top-0 left-0 right-0 bottom-0 backdrop-blur-md bg-white/30 flex justify-center items-center">
           <div className=" ">
             {loading ? (
-              <div className="flex space-x-2 justify-center items-center ">
-                <span className="sr-only">Loading...</span>
-                <div className="neomorphic-dot shadow-inner bg-red-500 h-8 w-8 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-                <div className="neomorphic-dot shadow-inner bg-red-500 h-8 w-8 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-                <div className="neomorphic-dot shadow-inner bg-red-500 h-8 w-8 rounded-full animate-bounce"></div>
-              </div>
+              <Loading />
             ) : (
               <>
                 <div className="relative flex w-80 flex-col rounded-xl bg-gray-300 bg-clip-border text-gray-700 shadow-md">
@@ -96,44 +92,17 @@ function App() {
                   </div>
                   <div className="p-6 pt-0 flex justify-evenly">
                     <button
-                      className="neumorphic-button mt-4 bg-green-600 text-gray-100 px-4 py-2 rounded-lg shadow-lg shadow-green-300 focus:outline-none hover:border-0 focus:ring-gray-300 flex flex-row gap-1 justify-center items-center"
+                      className="neumorphic-button bg-green-600 text-gray-100 px-4 py-2 rounded-lg shadow-lg shadow-green-300 focus:outline-none hover:border-0 focus:ring-gray-300 flex flex-row gap-1 justify-center items-center"
                       onClick={closeModal}
                     >
-                      <svg
-                        height="15px"
-                        version="1.1"
-                        viewBox="0 0 14 19"
-                        width="14px"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <title />
-                        <desc />
-                        <defs />
-                        <g fill="none" id="Page-1" stroke="none">
-                          <g
-                            fill="white"
-                            id="Core"
-                            transform="translate(-383.000000, -213.000000)"
-                          >
-                            <g
-                              id="file-download"
-                              transform="translate(383.000000, 213.500000)"
-                            >
-                              <path
-                                d="M14,6 L10,6 L10,0 L4,0 L4,6 L0,6 L7,13 L14,6 L14,6 Z M0,15 L0,17 L14,17 L14,15 L0,15 L0,15 Z"
-                                id="Shape"
-                              />
-                            </g>
-                          </g>
-                        </g>
-                      </svg>
+                      <img src="../download.svg" alt="" />
                       <p>Save to Device</p>
                     </button>
                     <button
-                      className="neumorphic-button mt-4 bg-red-500 text-gray-100 px-4 py-2 rounded-lg shadow-lg shadow-red-300 focus:outline-none hover:border-0 focus:ring-gray-300 flex flex-row"
+                      className="neumorphic-button bg-red-500 text-gray-100 px-4 py-2 rounded-lg shadow-lg shadow-red-300 focus:outline-none hover:border-0 focus:ring-gray-300 flex flex-row gap-1 justify-center items-center"
                       onClick={closeModal}
                     >
-                      <p className="pr-1">X</p>
+                      <img src="../close.svg" alt="" />
                       <p>Close</p>
                     </button>
                   </div>
