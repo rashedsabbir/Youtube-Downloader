@@ -2,6 +2,7 @@ import "./App.css";
 
 import { useState } from "react";
 import Loading from "./components/loading";
+import Footer from "./components/footer";
 
 function App() {
   const [modalOpen, setModalOpen] = useState(false); // State to manage modal visibility
@@ -33,35 +34,37 @@ function App() {
   };
 
   return (
-    <div className="box bg-gray-200 p-4 m-16 rounded-lg shadow-lg max-w-3xl mx-auto">
-      <div className="grid grid-cols-1 gap-6 place-items-center">
-        <img className="w-16 h-16" src="../youtube.svg" alt="" />
-        <p className="text-4xl text-black text-center font-bold">
-          YouTube Video Downloader
-        </p>
-        <p className="text-md pb-6 text-black text-center">
-          Paste the YouTube video URL and instantly download videos for offline
-          viewing.
-        </p>
+    <>
+      <div className="box bg-gray-200 p-4 m-16 rounded-lg shadow-lg max-w-3xl mx-auto">
+        <div className="grid grid-cols-1 gap-6 place-items-center">
+          <img className="w-16 h-16" src="../youtube.svg" alt="" />
+          <p className="text-4xl text-black text-center font-bold">
+            YouTube Video Downloader
+          </p>
+          <p className="text-md pb-6 text-black text-center">
+            Paste the YouTube video URL and instantly download videos for
+            offline viewing.
+          </p>
+        </div>
+        <form className="flex items-center flex-col" onSubmit={handleDownload}>
+          <label className="block mb-6">
+            <input
+              type="text"
+              placeholder="Paste your video link here"
+              value={videoUrl}
+              onChange={handleInputChange}
+              className="neumorphic-input w-96 p-4 placeholder:pl-6 text-black bg-gray-200 rounded-lg shadow-lg focus:outline-none focus:ring-gray-300"
+            />
+          </label>
+          <button
+            type="submit"
+            className="neumorphic-button font-bold w-32 p-4 bg-red-500 text-gray-100 rounded-lg shadow-lg shadow-red-300 focus:outline-none hover:border-0 focus:ring-gray-300"
+          >
+            Download
+          </button>
+        </form>
       </div>
-      <form className="flex items-center flex-col" onSubmit={handleDownload}>
-        <label className="block mb-6">
-          <input
-            type="text"
-            placeholder="Paste your video link here"
-            value={videoUrl}
-            onChange={handleInputChange}
-            className="neumorphic-input w-96 p-4 placeholder:pl-6 text-black bg-gray-200 rounded-lg shadow-lg focus:outline-none focus:ring-gray-300"
-          />
-        </label>
-        <button
-          type="submit"
-          className="neumorphic-button font-bold w-32 p-4 bg-red-500 text-gray-100 rounded-lg shadow-lg shadow-red-300 focus:outline-none hover:border-0 focus:ring-gray-300"
-        >
-          Download
-        </button>
-      </form>
-
+      <Footer />
       {/* Modal */}
       {modalOpen && (
         <div className="fixed top-0 left-0 right-0 bottom-0 backdrop-blur-md bg-white/30 flex justify-center items-center">
@@ -112,7 +115,7 @@ function App() {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }
 
