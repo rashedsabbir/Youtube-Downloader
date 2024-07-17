@@ -1,21 +1,18 @@
-from fastapi import FastAPI, HTTPException
-from fastapi.responses import FileResponse
-from fastapi.middleware.cors import CORSMiddleware
-from pytube import YouTube
-import os
-from typing import Dict
-from pydantic import BaseModel
-import logging
-import time
 
-# Initialize FastAPI app
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import HTMLResponse
+import yt_dlp as youtube_dl
+import os
+import shutil
+import uvicorn
+import logging
+
 app = FastAPI()
 
-# Configure logging
+# Set up logging
 logging.basicConfig(level=logging.INFO)
 
-# Path to store downloaded videos
-OUTPUT_FOLDER = "/home/samsapiol/Downloads"
 
 # Add CORS middleware
 app.add_middleware(
@@ -27,65 +24,84 @@ app.add_middleware(
 )
 
 # Function to download a YouTube video
-def download_youtube_video(url):
-    e = None  # Initialize e before the try-except block
-    for attempt in range(3):  # Retry up to 3 times
-        try:
-            logging.info(f"Attempting to download video from URL: {url} (Attempt {attempt + 1})")
-            yt = YouTube(url)
-            stream = yt.streams.get_highest_resolution()
-
-            if not os.path.exists(OUTPUT_FOLDER):
-                os.makedirs(OUTPUT_FOLDER)
-
-            file_path = stream.download(OUTPUT_FOLDER)
-            return yt.title, file_path
-
-        except Exception as ex:
-            e = ex
-            logging.error(f"Error downloading video: {e}")
-            time.sleep(2)  # Wait for 2 seconds before retrying
-    raise HTTPException(status_code=500, detail=f"An error occurred: {e}")
-
-
-@app.get("/")
-def read_root():
-    return {"message": "YouTube Video Downloader API"}
-
-
-@app.get("/download/", response_class=FileResponse)
-def download(url: str):
+def download_youtube_video(url, output_folder):
     try:
-        title, file_path = download_youtube_video(url)
-        logging.info(f"Downloaded video: {title}")
-        return FileResponse(path=file_path, filename=os.path.basename(file_path))
+        # Create YouTube DL object with options
+        ydl_opts = {
+            'outtmpl': os.path.join(output_folder, '%(title)s.%(ext)s'),
+            'format': 'best',
+            'noplaylist': True
+        }
+
+        # Ensure the output folder exists
+        if not os.path.exists(output_folder):
+            os.makedirs(output_folder)
+
+        # Download the video
+        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+            info_dict = ydl.extract_info(url, download=True)
+            video_title = info_dict.get('title', 'Unknown Title')
+            logging.info(f"Downloaded: {video_title}")
+        
+        return video_title
+
+    except youtube_dl.DownloadError as e:
+        error_message = f"Download Error: {e}"
+        logging.error(error_message)
+        raise HTTPException(status_code=400, detail=error_message)
+    except Exception as e:
+        logging.error(f"An error occurred: {e}")
+        raise HTTPException(status_code=500, detail=f"An error occurred: {e}")
+
+@app.get("/", response_class=HTMLResponse)
+def read_root():
+    return """
+    <html>
+        <body>
+            <h1>YouTube Video Downloader</h1>
+            <form action="/download/" method="get">
+                <label for="url">YouTube URL:</label>
+                <input type="text" id="url" name="url" required>
+                <input type="submit" value="Download">
+            </form>
+        </body>
+    </html>
+    """
+
+@app.get("/download/", response_class=HTMLResponse)
+def download(url: str):
+    if not url:
+        raise HTTPException(status_code=400, detail="URL parameter is required")
+
+    output_folder = "/home/samsapiol/Desktop/youtube_video"
+    try:
+        title = download_youtube_video(url, output_folder)
     except HTTPException as e:
-        logging.error(f"HTTPException: {e.detail}")
         raise e
     except Exception as e:
         logging.error(f"Unexpected error: {e}")
-        raise HTTPException(
-            status_code=500, detail=f"An unexpected error occurred: {e}")
+        raise HTTPException(status_code=500, detail="An unexpected error occurred")
 
+    # Search for .mp4 files in the specified folder
+    mp4_files = [f for f in os.listdir(output_folder) if f.endswith('.mp4')]
 
-class DeleteRequest(BaseModel):
-    filename: str
+    if not mp4_files:
+        raise HTTPException(status_code=404, detail="No video files found")
 
+    # Generate clickable links for each .mp4 file found
+    links = [f'<a href="/static/{file}" target="_blank">{file}</a>' for file in mp4_files]
 
-@app.post("/delete/")
-def delete_video(request: DeleteRequest):
-    file_path = os.path.join(OUTPUT_FOLDER, request.filename)
-    try:
-        if os.path.exists(file_path):
-            os.remove(file_path)
-            return {"message": f"Deleted {request.filename}"}
-        else:
-            raise HTTPException(status_code=404, detail="File not found")
-    except Exception as e:
-        logging.error(f"Error deleting video: {e}")
-        raise HTTPException(status_code=500, detail=f"An error occurred: {e}")
-
+    # Generate HTML to display the clickable links
+    html_content = f"""
+    <html>
+        <body>
+            <h1>Downloaded: {title}</h1>
+            <h2>Click the links below to download your video(s):</h2>
+            {'<br>'.join(links)}
+        </body>
+    </html>
+    """
+    return HTMLResponse(content=html_content)
 
 if __name__ == "__main__":
-    import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
