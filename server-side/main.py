@@ -2,6 +2,7 @@
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
 import yt_dlp as youtube_dl
 import os
 import shutil
@@ -13,6 +14,9 @@ app = FastAPI()
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 
+# Serve the static files in the download directory
+download_folder = "/home/samsapiol/Desktop/youtube_video"
+app.mount("/static", StaticFiles(directory=download_folder), name="static")
 
 # Add CORS middleware
 app.add_middleware(
@@ -23,9 +27,28 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
+def clear_directory(directory):
+    """
+    Deletes all files in the specified directory.
+    """
+    try:
+        for filename in os.listdir(directory):
+            file_path = os.path.join(directory, filename)
+            if os.path.isfile(file_path):
+                os.remove(file_path)
+                logging.info(f"Deleted file: {file_path}")
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+                logging.info(f"Deleted directory: {file_path}")
+    except Exception as e:
+        logging.error(f"Failed to clear directory: {e}")
+
 # Function to download a YouTube video
 def download_youtube_video(url, output_folder):
     try:
+        # Clear existing files in the output folder
+        clear_directory(output_folder)
+
         # Create YouTube DL object with options
         ydl_opts = {
             'outtmpl': os.path.join(output_folder, '%(title)s.%(ext)s'),
@@ -73,7 +96,7 @@ def download(url: str):
     if not url:
         raise HTTPException(status_code=400, detail="URL parameter is required")
 
-    output_folder = "/home/samsapiol/Desktop/youtube_video"
+    output_folder = download_folder
     try:
         title = download_youtube_video(url, output_folder)
     except HTTPException as e:
@@ -89,7 +112,7 @@ def download(url: str):
         raise HTTPException(status_code=404, detail="No video files found")
 
     # Generate clickable links for each .mp4 file found
-    links = [f'<a href="/static/{file}" target="_blank">{file}</a>' for file in mp4_files]
+    links = [f'<a href="/static/{file}" download="{file}" target="_blank">{file}</a>' for file in mp4_files]
 
     # Generate HTML to display the clickable links
     html_content = f"""

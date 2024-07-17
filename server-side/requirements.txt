@@ -3,3 +3,4 @@ uvicorn
 pytube
 pydantic
 tqdm
+yt_dlp
