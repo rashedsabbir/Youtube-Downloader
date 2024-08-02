@@ -8,6 +8,7 @@ import os
 import shutil
 import uvicorn
 import logging
+import subprocess
 
 app = FastAPI()
 
@@ -18,14 +19,15 @@ logging.basicConfig(level=logging.INFO)
 download_folder = "/home/samsapiol/Desktop/youtube_video"
 app.mount("/static", StaticFiles(directory=download_folder), name="static")
 
-# Add CORS middleware
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # Allows all origins
-    allow_credentials=True,
-    allow_methods=["*"],  # Allows all methods
-    allow_headers=["*"],  # Allows all headers
-)
+def check_ffmpeg():
+    """
+    Check if ffmpeg is installed and accessible.
+    """
+    try:
+        subprocess.run(['ffmpeg', '-version'], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        logging.info("ffmpeg is installed and accessible.")
+    except subprocess.CalledProcessError:
+        raise HTTPException(status_code=500, detail="ffmpeg is not installed or not accessible. Please install ffmpeg.")
 
 def clear_directory(directory):
     """
@@ -46,13 +48,17 @@ def clear_directory(directory):
 # Function to download a YouTube video
 def download_youtube_video(url, output_folder):
     try:
+        # Ensure ffmpeg is installed
+        check_ffmpeg()
+
         # Clear existing files in the output folder
         clear_directory(output_folder)
 
         # Create YouTube DL object with options
         ydl_opts = {
             'outtmpl': os.path.join(output_folder, '%(title)s.%(ext)s'),
-            'format': 'best',
+            'format': 'bestvideo+bestaudio/best',
+            'merge_output_format': 'mp4',
             'noplaylist': True
         }
 

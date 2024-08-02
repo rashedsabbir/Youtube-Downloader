@@ -19,7 +19,7 @@
         <td>Mushfiqur Rahman Robin</td>
         <td>Rashedul Hassan Sabbir</td>
     </tr>
-    <tr>
+    <tr align='center'>
     <td><a href="https://www.linkedin.com/in/mushfiqur--rahman/" target="blank"><img align="center"
             src="https://img.shields.io/badge/LinkedIn-%230077B5.svg?&logo=linkedin&logoColor=white"
             alt="rashedsabbir" /></a> <a
