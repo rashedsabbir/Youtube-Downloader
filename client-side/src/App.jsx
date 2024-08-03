@@ -1,36 +1,80 @@
 import "./App.css";
-
 import { useState } from "react";
+import axios from "axios";
 import Loading from "./components/loading";
 import Footer from "./components/footer";
 
 function App() {
-  const [modalOpen, setModalOpen] = useState(false); // State to manage modal visibility
-  const [videoUrl, setVideoUrl] = useState(""); // State to store video URL input
-  const [loading, setLoading] = useState(false); // State to manage loading animation
+  const [modalOpen, setModalOpen] = useState(false);
+  const [videoUrl, setVideoUrl] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [videoInfo, setVideoInfo] = useState({ src: "", title: "", file: "" });
+  const [error, setError] = useState("");
 
   const openModal = () => {
     setModalOpen(true);
-    setLoading(true); // Start loading animation
-    // Simulate loading delay (you would replace this with your actual video loading logic)
-    setTimeout(() => {
-      setLoading(false); // Stop loading animation
-    }, 2000); // Simulate loading time of 2 seconds
+    setLoading(true);
   };
 
-  const closeModal = () => {
+  const closeModal = async () => {
     setModalOpen(false);
-    setVideoUrl(""); // Clear video URL input when modal closes
+    setVideoUrl("");
+    setVideoInfo({ src: "", title: "", file: "" });
   };
 
   const handleInputChange = (event) => {
     setVideoUrl(event.target.value);
   };
 
-  const handleDownload = (event) => {
+  const handleDownload = async (event) => {
     event.preventDefault();
     openModal();
-    // Here you would implement logic to fetch and prepare the video for download
+    try {
+      const response = await axios.get(
+        `http://0.0.0.0:8000/download/?url=${encodeURIComponent(videoUrl)}`
+      );
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(response.data, "text/html");
+      const downloadLink = doc.querySelector("a").href;
+      const videoTitle = doc.querySelector("h1").textContent;
+
+      setVideoInfo({
+        src: `https://img.youtube.com/vi/${extractVideoId(videoUrl)}/0.jpg`,
+        title: videoTitle,
+        file: downloadLink,
+      });
+    } catch (err) {
+      setError(
+        "Error downloading video: " +
+          (err.response?.data?.detail || err.message)
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAddToDevice = async () => {
+    try {
+      const response = await axios.get(videoInfo.file, {
+        responseType: "blob",
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", videoInfo.file.split("/").pop());
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error("Error saving video:", error);
+    }
+  };
+
+  const extractVideoId = (url) => {
+    const regExp =
+      /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+    const match = url.match(regExp);
+    return match && match[7].length === 11 ? match[7] : null;
   };
 
   return (
@@ -65,7 +109,6 @@ function App() {
         </form>
       </div>
       <Footer />
-      {/* Modal */}
       {modalOpen && (
         <div className="fixed top-0 left-0 right-0 bottom-0 backdrop-blur-md bg-white/30 flex justify-center items-center">
           <div className=" ">
@@ -75,28 +118,21 @@ function App() {
               <>
                 <div className="relative flex w-80 flex-col rounded-xl bg-gray-300 bg-clip-border text-gray-700 shadow-md">
                   <div className="relative mx-4 -mt-6 h-40 overflow-hidden rounded-xl bg-blue-gray-500 bg-clip-border text-white shadow-lg shadow-blue-gray-500/40 bg-gradient-to-r from-blue-500 to-blue-600">
-                    <div className="relative h-0 pb-9/16">
-                      <iframe
-                        title="Video"
-                        className="absolute inset-0 w-full h-full"
-                        src={`https://www.youtube.com/embed/${videoUrl}`}
-                        frameBorder="0"
-                        allowFullScreen
-                      ></iframe>
-                    </div>
+                    <img
+                      src={videoInfo.src}
+                      alt="Video Thumbnail"
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
                   </div>
                   <div className="p-6">
                     <h5 className="mb-2 block font-sans text-xl font-semibold leading-snug tracking-normal text-blue-gray-900 antialiased">
-                      Video Title
+                      {videoInfo.title}
                     </h5>
-                    <p className="block font-sans text-base font-light leading-relaxed text-inherit antialiased">
-                      Video Description
-                    </p>
                   </div>
                   <div className="p-6 pt-0 flex justify-evenly">
                     <button
                       className="neumorphic-button bg-green-600 text-gray-100 px-4 py-2 rounded-lg shadow-lg shadow-green-300 focus:outline-none hover:border-0 focus:ring-gray-300 flex flex-row gap-1 justify-center items-center"
-                      onClick={closeModal}
+                      onClick={handleAddToDevice}
                     >
                       <img src="../download.svg" alt="" />
                       <p>Save to Device</p>
