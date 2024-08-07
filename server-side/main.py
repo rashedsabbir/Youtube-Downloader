@@ -25,7 +25,7 @@ app.add_middleware(
 logging.basicConfig(level=logging.INFO)
 
 # Serve the static files in the download directory
-download_folder = "/home/samsapiol/Desktop/youtube_video"
+download_folder = "/home/samsapiol/Desktop/"
 app.mount("/static", StaticFiles(directory=download_folder), name="static")
 
 def check_ffmpeg():
