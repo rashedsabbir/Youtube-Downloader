@@ -10,6 +10,7 @@
 - Fastapi
 - Uvicorn
 - yt_dlp
+- ffmpeg
 - Axios
 
 ## Developed By
