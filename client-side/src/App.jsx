@@ -16,7 +16,7 @@ function App() {
     setLoading(true);
   };
 
-  const closeModal = async () => {
+  const closeModal = () => {
     setModalOpen(false);
     setVideoUrl("");
     setVideoInfo({ src: "", title: "", file: "" });
@@ -38,10 +38,16 @@ function App() {
       const downloadLink = doc.querySelector("a").href;
       const videoTitle = doc.querySelector("h1").textContent;
 
+      // Ensure the correct base URL is used for downloading
+      const backendUrl = downloadLink.replace(
+        "localhost:5173",
+        "localhost:8000"
+      );
+
       setVideoInfo({
         src: `https://img.youtube.com/vi/${extractVideoId(videoUrl)}/0.jpg`,
         title: videoTitle,
-        file: downloadLink,
+        file: backendUrl,
       });
     } catch (err) {
       setError(
@@ -56,15 +62,25 @@ function App() {
   const handleAddToDevice = async () => {
     try {
       const response = await axios.get(videoInfo.file, {
-        responseType: "blob",
+        responseType: "blob", // Ensure we're getting a blob response
       });
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", videoInfo.file.split("/").pop());
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+
+      // Log the response to check its status and data
+      console.log(response);
+
+      if (response.status === 200) {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement("a");
+        const fileName = decodeURIComponent(videoInfo.file.split("/").pop()); // Get the correct filename
+
+        link.href = url;
+        link.setAttribute("download", fileName); // Set the filename for download
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      } else {
+        console.error("Failed to download the video file.");
+      }
     } catch (error) {
       console.error("Error saving video:", error);
     }

@@ -133,7 +133,7 @@ def download(url: str):
     html_content = f"""
     <html>
         <body>
-            <h1>Downloaded: {title}</h1>
+            <h1>{title}</h1>
             <h2>Click the links below to download your video(s):</h2>
             {'<br>'.join(links)}
         </body>
