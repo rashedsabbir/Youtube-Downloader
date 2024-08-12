@@ -41,7 +41,7 @@ function App() {
       // Ensure the correct base URL is used for downloading
       const backendUrl = downloadLink.replace(
         "localhost:5173",
-        "localhost:8000"
+        "localhost:10000"
       );
 
       setVideoInfo({
