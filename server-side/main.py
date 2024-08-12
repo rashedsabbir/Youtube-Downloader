@@ -92,7 +92,7 @@ def read_root():
     <html>
         <body>
             <h1>YouTube Video Downloader</h1>
-            <form action="/download/" method="get">
+            <form action="/api/download/" method="get">
                 <label for="url">YouTube URL:</label>
                 <input type="text" id="url" name="url" required>
                 <input type="submit" value="Download">
