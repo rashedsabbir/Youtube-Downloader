@@ -25,7 +25,13 @@ app.add_middleware(
 logging.basicConfig(level=logging.INFO)
 
 # Serve the static files in the download directory
-download_folder = "/home/samsapiol/Desktop/"
+# Set the download folder path
+download_folder = os.path.join(os.path.dirname(__file__), 'downloads')
+
+# Ensure the directory exists
+if not os.path.exists(download_folder):
+    os.makedirs(download_folder)
+# download_folder = "/home/samsapiol/Desktop/"
 app.mount("/static", StaticFiles(directory=download_folder), name="static")
 
 def check_ffmpeg():
