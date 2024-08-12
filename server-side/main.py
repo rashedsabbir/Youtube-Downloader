@@ -1,4 +1,3 @@
-
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
@@ -24,22 +23,20 @@ app.add_middleware(
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 
-# Serve the static files in the download directory
 # Set the download folder path
 download_folder = os.path.join(os.path.dirname(__file__), 'downloads')
 
 # Ensure the directory exists
 if not os.path.exists(download_folder):
     os.makedirs(download_folder)
-    
-# download_folder = "/home/samsapiol/Desktop/"
+
+# Serve the static files in the download directory
+app.mount("/static", StaticFiles(directory=download_folder), name="static")
+
+# Serve the frontend build files
 app.mount("/", StaticFiles(directory=os.path.join("client-side", "dist"), html=True), name="static")
-# app.mount("/static", StaticFiles(directory=download_folder), name="static")
 
 def check_ffmpeg():
-    """
-    Check if ffmpeg is installed and accessible.
-    """
     try:
         subprocess.run(['ffmpeg', '-version'], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         logging.info("ffmpeg is installed and accessible.")
@@ -47,9 +44,6 @@ def check_ffmpeg():
         raise HTTPException(status_code=500, detail="ffmpeg is not installed or not accessible. Please install ffmpeg.")
 
 def clear_directory(directory):
-    """
-    Deletes all files in the specified directory.
-    """
     try:
         for filename in os.listdir(directory):
             file_path = os.path.join(directory, filename)
@@ -62,16 +56,11 @@ def clear_directory(directory):
     except Exception as e:
         logging.error(f"Failed to clear directory: {e}")
 
-# Function to download a YouTube video
 def download_youtube_video(url, output_folder):
     try:
-        # Ensure ffmpeg is installed
         check_ffmpeg()
-
-        # Clear existing files in the output folder
         clear_directory(output_folder)
 
-        # Create YouTube DL object with options
         ydl_opts = {
             'outtmpl': os.path.join(output_folder, '%(title)s.%(ext)s'),
             'format': 'bestvideo+bestaudio/best',
@@ -79,16 +68,14 @@ def download_youtube_video(url, output_folder):
             'noplaylist': True
         }
 
-        # Ensure the output folder exists
         if not os.path.exists(output_folder):
             os.makedirs(output_folder)
 
-        # Download the video
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             info_dict = ydl.extract_info(url, download=True)
             video_title = info_dict.get('title', 'Unknown Title')
             logging.info(f"Downloaded: {video_title}")
-        
+
         return video_title
 
     except youtube_dl.DownloadError as e:
@@ -114,7 +101,7 @@ def read_root():
     </html>
     """
 
-@app.get("/download/", response_class=HTMLResponse)
+@app.get("/api/download/", response_class=HTMLResponse)
 def download(url: str):
     if not url:
         raise HTTPException(status_code=400, detail="URL parameter is required")
@@ -128,16 +115,13 @@ def download(url: str):
         logging.error(f"Unexpected error: {e}")
         raise HTTPException(status_code=500, detail="An unexpected error occurred")
 
-    # Search for .mp4 files in the specified folder
     mp4_files = [f for f in os.listdir(output_folder) if f.endswith('.mp4')]
 
     if not mp4_files:
         raise HTTPException(status_code=404, detail="No video files found")
 
-    # Generate clickable links for each .mp4 file found
     links = [f'<a href="/static/{file}" download="{file}" target="_blank">{file}</a>' for file in mp4_files]
 
-    # Generate HTML to display the clickable links
     html_content = f"""
     <html>
         <body>
