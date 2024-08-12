@@ -34,7 +34,7 @@ if not os.path.exists(download_folder):
 app.mount("/static", StaticFiles(directory=download_folder), name="static")
 
 # Serve the frontend build files
-app.mount("/", StaticFiles(directory=os.path.join("client-side", "dist"), html=True), name="static")
+# app.mount("/", StaticFiles(directory=os.path.join("client-side", "dist"), html=True), name="static")
 
 def check_ffmpeg():
     try:
@@ -103,6 +103,7 @@ def read_root():
 
 @app.get("/api/download/", response_class=HTMLResponse)
 def download(url: str):
+    logging.info(f"Received download request for URL: {url}")
     if not url:
         raise HTTPException(status_code=400, detail="URL parameter is required")
 
