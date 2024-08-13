@@ -92,7 +92,7 @@ def read_root():
     <html>
         <body>
             <h1>YouTube Video Downloader</h1>
-            <form action="/api/download/" method="get">
+            <form action="/download/" method="get">
                 <label for="url">YouTube URL:</label>
                 <input type="text" id="url" name="url" required>
                 <input type="submit" value="Download">
@@ -101,7 +101,7 @@ def read_root():
     </html>
     """
 
-@app.get("/api/download/", response_class=HTMLResponse)
+@app.get("/download/", response_class=HTMLResponse)
 def download(url: str):
     logging.info(f"Received download request for URL: {url}")
     if not url:

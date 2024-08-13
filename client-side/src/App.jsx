@@ -31,7 +31,7 @@ function App() {
     openModal();
     try {
       const response = await axios.get(
-        `/api/download/?url=${encodeURIComponent(videoUrl)}`
+        `/download/?url=${encodeURIComponent(videoUrl)}`
       );
       const parser = new DOMParser();
       const doc = parser.parseFromString(response.data, "text/html");
