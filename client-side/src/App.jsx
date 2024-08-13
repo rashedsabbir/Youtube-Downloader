@@ -31,7 +31,9 @@ function App() {
     openModal();
     try {
       const response = await axios.get(
-        `/download/?url=${encodeURIComponent(videoUrl)}`
+        `https://youtube-downloader-q24s.onrender.com/download/?url=${encodeURIComponent(
+          videoUrl
+        )}`
       );
       const parser = new DOMParser();
       const doc = parser.parseFromString(response.data, "text/html");
@@ -39,11 +41,11 @@ function App() {
       const videoTitle = doc.querySelector("h1").textContent;
 
       // Ensure the correct base URL is used for downloading
-      const backendUrl = downloadLink.replace(
-        "https://youtube-downloader-q24s.onrender.com",
-        "localhost:10000"
-      );
-      // const backendUrl = downloadLink;
+      // const backendUrl = downloadLink.replace(
+      //   "https://youtube-downloader-q24s.onrender.com",
+      //   "localhost:10000"
+      // );
+      const backendUrl = downloadLink;
 
       setVideoInfo({
         src: `https://img.youtube.com/vi/${extractVideoId(videoUrl)}/0.jpg`,
