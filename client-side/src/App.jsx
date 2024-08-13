@@ -39,11 +39,11 @@ function App() {
       const videoTitle = doc.querySelector("h1").textContent;
 
       // Ensure the correct base URL is used for downloading
-      // const backendUrl = downloadLink.replace(
-      //   "localhost:5173",
-      //   "localhost:10000"
-      // );
-      const backendUrl = downloadLink;
+      const backendUrl = downloadLink.replace(
+        "https://youtube-downloader-q24s.onrender.com",
+        "localhost:10000"
+      );
+      // const backendUrl = downloadLink;
 
       setVideoInfo({
         src: `https://img.youtube.com/vi/${extractVideoId(videoUrl)}/0.jpg`,
