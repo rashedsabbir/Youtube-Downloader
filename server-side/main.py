@@ -103,7 +103,7 @@ def read_root():
 
 @app.get("/download/", response_class=HTMLResponse)
 def download(url: str):
-    logging.info(f"Received download request for URL: {url}")
+    # logging.info(f"Received download request for URL: {url}")
     if not url:
         raise HTTPException(status_code=400, detail="URL parameter is required")
 
@@ -136,4 +136,4 @@ def download(url: str):
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=10000)
+    uvicorn.run(app, host="0.0.0.0", port=8000)
