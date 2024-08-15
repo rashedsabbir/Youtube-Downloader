@@ -2,7 +2,8 @@ import "./App.css";
 import { useState } from "react";
 import axios from "axios";
 import Loading from "./components/loading";
-import Footer from "./components/footer";
+// import Footer from "./components/footer";
+import mockUp from "/image.png";
 
 function App() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -125,7 +126,7 @@ function App() {
           </button>
         </form>
       </div>
-      <Footer />
+      {/* <Footer /> */}
       {modalOpen && (
         <div className="fixed top-0 left-0 right-0 bottom-0 backdrop-blur-md bg-white/30 flex justify-center items-center">
           <div className=" ">
@@ -136,14 +137,14 @@ function App() {
                 <div className="relative flex w-80 flex-col rounded-xl bg-gray-300 bg-clip-border text-gray-700 shadow-md">
                   <div className="relative mx-4 -mt-6 h-40 overflow-hidden rounded-xl bg-blue-gray-500 bg-clip-border text-white shadow-lg shadow-blue-gray-500/40 bg-gradient-to-r from-blue-500 to-blue-600">
                     <img
-                      src={videoInfo.src}
+                      src={videoInfo.src || mockUp}
                       alt="Video Thumbnail"
                       className="absolute inset-0 w-full h-full object-cover"
                     />
                   </div>
                   <div className="p-6">
                     <h5 className="mb-2 block font-sans text-xl font-semibold leading-snug tracking-normal text-blue-gray-900 antialiased">
-                      {videoInfo.title}
+                      {videoInfo.title || " Video not found!!!"}
                     </h5>
                   </div>
                   <div className="p-6 pt-0 flex justify-evenly">
