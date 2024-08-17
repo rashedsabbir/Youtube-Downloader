@@ -88,7 +88,7 @@ To run the client-side of the application, follow these steps:
 
 The server-side of the application is built using FastAPI. You can run it as follows:
 
-1. Create a virtual environment:
+1. Create a virtual environment(or install anaconda and configure):
 
    ```bash
    python -m venv env
